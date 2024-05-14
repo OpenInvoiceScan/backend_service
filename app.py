@@ -4,6 +4,7 @@ from pdf import save_pdf
 import fitz
 from PIL import Image
 import os
+import libraries.processing_pipeline as pp
 
 app = Flask(__name__)
 app.debug = True
@@ -21,11 +22,15 @@ def pdf_upload():
 
     files = request.files.getlist('files')
     
-    results = save_pdf(files)
-    print(results)
-
-
-    return "", 200
+    pdf_routes = save_pdf(files)
+    response = ""
+    
+    for pdf_route in pdf_routes:
+        pdf_path = pdf_route["path"]
+        response = pp.process_pdf(pdf_path)
+        
+    
+    return response
 
 if __name__ == '__main__':
     app.run()
