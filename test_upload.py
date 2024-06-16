@@ -1,10 +1,12 @@
 import requests
 import json
 
-url = "http://localhost:5000/pdf_upload"  # Cambia esto a la URL correcta de tu aplicación
+url = "http://localhost:5000/pdf_upload/json"  # Cambia esto a la URL correcta de tu aplicación
+
+file = "template2.pdf"
 
 files = {
-    'files': ('factura69.pdf', open('factura69.pdf', 'rb'), 'application/pdf')
+    'files': (file , open(file, 'rb'), 'application/pdf')
 }
 
 response = requests.post(url, files=files)

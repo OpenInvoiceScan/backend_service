@@ -3,60 +3,44 @@ import libraries.ocr as ocr
 import libraries.predict as ai
 import libraries.translator as tr
 import libraries.json_parser as jp
+import libraries.pdf as pdf
+
+
+
 import json
-import cv2
 
 
 
-if __name__ == '__main__':
-    print('Processing pipeline is running')
-    pdf_path = 'factura69.pdf'
-    image_chunks = ip.pdf_to_img_chunks(pdf_path)
+def test_pipeline():
 
+    json_result = process_pdf('template2.pdf')
 
-    tokens = []
-    labels = []
-    for i, image in enumerate(image_chunks):
-        text = ocr.ocr(image)
-        current_tokens,current_labels = ai.predict(text)
-        tokens.append(current_tokens)
-        labels.append(current_labels)
-        
-
-    for i in range(len(tokens)):
-        current_tokens, current_labels = tr.unify_tokens(tokens[i],labels[i])
-        current_tokens, current_labels = tr.merge_same_labels(current_tokens, current_labels)
-        tokens[i] = current_tokens
-        labels[i] = current_labels
-
-
-    json_result = jp.convert_words_and_labels_into_json(labels,tokens)
-
-    ##Conver to json format the dictionary
-    json_result = json.dumps(json_result, indent=4)
+    print(json_result)
     
     
 def process_pdf(pdf_path):
-    image_chunks = ip.pdf_to_img_chunks(pdf_path)
+    image = pdf.pdf_to_img(pdf_path)
+    text = ocr.ocr(image)
 
-    tokens = []
-    labels = []
-    for i, image in enumerate(image_chunks):
-        text = ocr.ocr(image)
-        current_tokens,current_labels = ai.predict(text)
-        tokens.append(current_tokens)
-        labels.append(current_labels)
-        
-
-    for i in range(len(tokens)):
-        current_tokens, current_labels = tr.unify_tokens(tokens[i],labels[i])
-        current_tokens, current_labels = tr.merge_same_labels(current_tokens, current_labels)
-        tokens[i] = current_tokens
-        labels[i] = current_labels
+    tokens, labels = ai.predict(text)
+    
+    print(len(tokens))
+    print(len(labels))
 
 
-    json_result = jp.convert_words_and_labels_into_json(labels,tokens)
+    current_tokens, current_labels = tr.unify_tokens(tokens,labels)
+    current_tokens, current_labels = tr.merge_same_labels(current_tokens, current_labels)
+    print(current_tokens)
+    print(current_labels)
+
+    for i in range(len(current_tokens)):
+        print(current_tokens[i], current_labels[i])
+
+
+
+    json_result = jp.convert_words_and_labels_into_json(current_labels,current_tokens)
 
     ##Convert to json format the dictionary
     json_result = json.dumps(json_result, indent=4)
     return json_result
+

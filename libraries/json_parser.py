@@ -66,7 +66,7 @@ json_example = {
 }
 
 
-def convert_words_and_labels_into_json(labels_chunks, tokens_chunks):
+def convert_words_and_labels_into_json(labels, tokens):
     result = {}
     result['issuer'] = {}
     result['recipient'] = {}
@@ -76,34 +76,34 @@ def convert_words_and_labels_into_json(labels_chunks, tokens_chunks):
     current_item = {}
     current_tax = {}
     
-    for i in range(len(labels_chunks)):
-        for j in range(len(labels_chunks[i])):
-            if labels_chunks[i][j].startswith('B-issuer'):
-                issuer_key = parse_issuer(tokens_chunks[i][j],labels_chunks[i][j])
-                if issuer_key:
-                    result['issuer'][issuer_key] = tokens_chunks[i][j]
-            elif labels_chunks[i][j].startswith('B-recipient'):
-                recipient_key = parse_recipient(tokens_chunks[i][j],labels_chunks[i][j])
-                if recipient_key:
-                    result['recipient'][recipient_key] = tokens_chunks[i][j]
-            elif labels_chunks[i][j].startswith('B-item'):
-                item_key = parse_item(tokens_chunks[i][j],labels_chunks[i][j])
-                if item_key:
-                    if item_key == 'description' and current_item:
-                        result['items'].append(current_item)
-                        current_item = {}
-                    current_item[item_key] = tokens_chunks[i][j]
-            elif labels_chunks[i][j].startswith('B-tax'):
-                tax_key = parse_tax(tokens_chunks[i][j],labels_chunks[i][j])
-                if tax_key:
-                    if tax_key == 'description' and current_tax:
-                        result['taxes'].append(current_tax)
-                        current_tax = {}
-                    current_tax[tax_key] = tokens_chunks[i][j]
-            elif labels_chunks[i][j].startswith('B-'):
-                generic_key = parse_generic(tokens_chunks[i][j], labels_chunks[i][j])
-                if generic_key:
-                    result[generic_key] = tokens_chunks[i][j]
+
+    for j in range(len(labels)):
+        if labels[j].startswith('B-issuer'):
+            issuer_key = parse_issuer(tokens[j],labels[j])
+            if issuer_key:
+                result['issuer'][issuer_key] = tokens[j]
+        elif labels[j].startswith('B-recipient'):
+            recipient_key = parse_recipient(tokens[j],labels[j])
+            if recipient_key:
+                result['recipient'][recipient_key] = tokens[j]
+        elif labels[j].startswith('B-item'):
+            item_key = parse_item(tokens[j],labels[j])
+            if item_key:
+                if item_key == 'description' and current_item:
+                    result['items'].append(current_item)
+                    current_item = {}
+                current_item[item_key] = tokens[j]
+        elif labels[j].startswith('B-tax'):
+            tax_key = parse_tax(tokens[j],labels[j])
+            if tax_key:
+                if tax_key == 'description' and current_tax:
+                    result['taxes'].append(current_tax)
+                    current_tax = {}
+                current_tax[tax_key] = tokens[j]
+        elif labels[j].startswith('B-'):
+            generic_key = parse_generic(tokens[j], labels[j])
+            if generic_key:
+                result[generic_key] = tokens[j]
     
     if current_item:
         result['items'].append(current_item)

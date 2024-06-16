@@ -54,6 +54,7 @@ def load_model(model_path):
     return model
 
 model = load_model('pretrained/model_state_dict.pth')
+print('Model loaded')
 tokenizer = BertTokenizer.from_pretrained(MODEL_NAME)
 
 def predict(text):
