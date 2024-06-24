@@ -46,6 +46,4 @@ def extract_avalon_sign(pdf_route):
 
 if __name__ == '__main__':
     add_metadata('Clear', 'template1.pdf')
-    print(check_for_avalon_sign('template1.pdf'))
-    print(extract_avalon_sign('template1.pdf'))
     

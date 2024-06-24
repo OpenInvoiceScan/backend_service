@@ -23,18 +23,10 @@ def process_pdf(pdf_path):
     text = ocr.ocr(image)
 
     tokens, labels = ai.predict(text)
-    
-    print(len(tokens))
-    print(len(labels))
 
 
     current_tokens, current_labels = tr.unify_tokens(tokens,labels)
     current_tokens, current_labels = tr.merge_same_labels(current_tokens, current_labels)
-    print(current_tokens)
-    print(current_labels)
-
-    for i in range(len(current_tokens)):
-        print(current_tokens[i], current_labels[i])
 
 
 
