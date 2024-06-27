@@ -29,13 +29,15 @@ def pdf_upload_json():
     files = request.files.getlist('files')
     
     pdf_routes = save_pdf(files)
-    response = ""
-    
+    responses = []    
     for pdf_route in pdf_routes:
         pdf_path = pdf_route["path"]
-        response = pp.process_pdf(pdf_path)
+        pdf_name = pdf_route["filename"]
+        pdf_response = json.loads(pp.process_pdf(pdf_path))
+        pdf_response["pdf_name"] = pdf_name
+        responses.append(pdf_response)
         
-    return response
+    return jsonify(responses)
 
 @app.route("/pdf_upload/signed_pdf", methods=["POST"])
 def pdf_upload_signed_pdf():
@@ -63,14 +65,6 @@ def pdf_upload_signed_pdf():
 
     return send_file(zip_buffer, mimetype='application/zip', as_attachment=True, download_name='signed_pdfs.zip')
 
-
-@app.route('/download_test_pdf', methods=['GET'])
-def download_test_pdf():
-    test_pdf_path = 'template1.pdf'
-    if os.path.exists(test_pdf_path):
-        return send_file(test_pdf_path, mimetype='application/pdf', as_attachment=True, download_name='test.pdf')
-    else:
-        return jsonify({"error": "Test PDF not found"}), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

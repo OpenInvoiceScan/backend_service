@@ -28,8 +28,6 @@ def process_pdf(pdf_path):
     current_tokens, current_labels = tr.unify_tokens(tokens,labels)
     current_tokens, current_labels = tr.merge_same_labels(current_tokens, current_labels)
 
-
-
     json_result = jp.convert_words_and_labels_into_json(current_labels,current_tokens)
 
     ##Convert to json format the dictionary
